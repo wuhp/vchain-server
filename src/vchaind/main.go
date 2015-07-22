@@ -52,7 +52,6 @@ func initialize() {
             log.Fatalf("Failed to open log file, %s\n", e.Error())
         }
 
-        log.Printf("Redirecting log to file %s\n", conf.Log)
         log.SetOutput(f)
     }
 
@@ -68,7 +67,7 @@ func initialize() {
 }
 
 func main() {
-    path := flag.String("c", "/vchain/config/dispatcher.json", "config file")
+    path := flag.String("c", "/vchaind/config/vchaind.json", "config file")
     flag.Parse()
 
     parseConfig(*path)
