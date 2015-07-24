@@ -18,7 +18,7 @@ type Route struct {
 
 var routes = []Route{
     Route{"GET",  "/v1/vchain/ping",          handler.Ping    },
-    Route{"POST", "/v1/vchain/data/{secret}", handler.PostData},
+    Route{"POST", "/v1/vchain/{secret}/data", handler.PostData},
 }
 
 type InnerResponseWriter struct {
