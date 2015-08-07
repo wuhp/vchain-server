@@ -17,8 +17,28 @@ type Route struct {
 }
 
 var routes = []Route{
-    Route{"GET",  "/v1/vchain/ping",          handler.Ping    },
-    Route{"POST", "/v1/vchain/{secret}/data", handler.PostData},
+    Route{"GET",  "/api/v1/ping",     handler.Ping       },
+    Route{"POST", "/api/v1/requests", handler.PostRequest},
+
+    Route{"GET",  "/api/v1/services",                           handler.GetServices               },
+    Route{"GET",  "/api/v1/services-chain",                     handler.GetServiceChain           },
+    Route{"GET",  "/api/v1/services/{name}/children",           handler.GetServiceChildren        },
+    Route{"GET",  "/api/v1/services/{name}/children-tree",      handler.GetServiceChildrenTree    },
+    Route{"GET",  "/api/v1/services/{name}/parents",            handler.GetServiceParents         },
+    Route{"GET",  "/api/v1/services/{name}/request-categories", handler.GetServiceReqestCategories},
+
+    Route{"GET",  "/api/v1/invoke-chains",                                         handler.GetAllInvokeChains    },
+    Route{"GET",  "/api/v1/invoke-chains/{service}/{category}",                    handler.GetInvokeChains       },
+    Route{"GET",  "/api/v1/invoke-chains/{service}/{category}/{id}",               handler.GetInvokeChain        },
+    Route{"GET",  "/api/v1/invoke-chains/{service}/{category}/{id}/root-requests", handler.GetInvokeChainRequests},
+
+    Route{"GET",  "/api/v1/request-overview",              handler.GetRequestOverview    },
+    Route{"GET",  "/api/v1/requests",                      handler.GetRequests           },
+    Route{"GET",  "/api/v1/requests/{uuid}",               handler.GetRequest            },
+    Route{"GET",  "/api/v1/requests/{uuid}/invoke-chain",  handler.GetRequestInvokeChain },
+    Route{"GET",  "/api/v1/requests/{uuid}/parent-chain",  handler.GetRequestParentChain },
+    Route{"GET",  "/api/v1/requests/{uuid}/children",      handler.GetRequestChildren    },
+    Route{"GET",  "/api/v1/requests/{uuid}/children-tree", handler.GetRequestChildrenTree},
 }
 
 type InnerResponseWriter struct {

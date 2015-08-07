@@ -1,45 +1,30 @@
 package model
 
-////////////////////////////////////////////////////////////////////////////////
-
-type Order struct {
-    Columns string
-    Sequence string
+type Request struct {
+    Uuid          string `json:"uuid"`
+    ParentUuid    string `json:"parent_uuid"`
+    Service       string `json:"service"`
+    Category      string `json:"category"`
+    SyncOption    string `json:"sync_option"`
+    BeginTs       int64  `json:"begin_ts"`
+    EndTs         int64  `json:"end_ts"`
+    BeginMetadata string `json:"begin_metadata"`
+    EndMetadata   string `json:"end_metadata"`
+    CreateTs      string `json:"create_ts"`
+    UpdateTs      string `json:"update_ts"`
 }
 
-func NewOrder(cols, seq string) *Order {
-    return &Order{
-        Columns: cols,
-        Sequence: seq,
-    }
+type RequestGroup struct {
+  Uuid             string
+  RequestSeq       string
+  RequestParentSeq string
+  InvokeChainId    int64
+  InProcessOrNot   bool
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type Paging struct {
-    Offset int
-    Size   int
-}
-
-func NewPaging(offset, size int) *Paging {
-    return &Paging{
-        Offset: offset,
-        Size: size,
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-type Condition struct {
-    Key   string
-    Op    string
-    Value interface{}
-}
-
-func NewCondition(key, op string, value interface{}) *Condition {
-    return &Condition{
-        Key: key,
-        Op: op,
-        Value: value,
-    }
+type InvokeChain struct {
+  Id               int64
+  Header           string
+  RequestSeq       string
+  RequestParentSeq string
 }
