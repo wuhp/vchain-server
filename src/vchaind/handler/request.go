@@ -8,6 +8,10 @@ func GetRequestOverview(w http.ResponseWriter, r *http.Request) {
     // TBD
 }
 
+func GetRequestTypes(w http.ResponseWriter, r *http.Request) {
+    // TBD
+}
+
 func GetRequests(w http.ResponseWriter, r *http.Request) {
     // TBD
 }

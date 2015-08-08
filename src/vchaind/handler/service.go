@@ -2,44 +2,35 @@ package handler
 
 import (
     "net/http"
+    "encoding/json"
+
+    "github.com/gorilla/mux"
+
+    "vchaind/model"
 )
 
 func GetServices(w http.ResponseWriter, r *http.Request) {
-    // TBD
+    services := model.GetServices()
+    json.NewEncoder(w).Encode(services)
 }
 
 func GetServiceChain(w http.ResponseWriter, r *http.Request) {
-    // TBD
+    pairs := model.GetServiceChain()
+    json.NewEncoder(w).Encode(pairs)
 }
 
-func GetServiceChildren(w http.ResponseWriter, r *http.Request) {
-/*
+func GetServiceRequestCategories(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     name := vars["name"]
-*/
-    // TBD
-}
 
-func GetServiceChildrenTree(w http.ResponseWriter, r *http.Request) {
-/*
-    vars := mux.Vars(r)
-    name := vars["name"]
-*/
-    // TBD
-}
+    categories := make([]string, 0)
 
-func GetServiceParents(w http.ResponseWriter, r *http.Request) {
-/*
-    vars := mux.Vars(r)
-    name := vars["name"]
-*/
-    // TBD
-}
+    types := model.GetRequestTypes()
+    for _, t := range types {
+        if t.Service == name {
+            categories = append(categories, t.Category)
+        }
+    }
 
-func GetServiceReqestCategories(w http.ResponseWriter, r *http.Request) {
-/*
-    vars := mux.Vars(r)
-    name := vars["name"]
-*/
-    // TBD
+    json.NewEncoder(w).Encode(categories)
 }
