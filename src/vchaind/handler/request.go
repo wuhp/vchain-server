@@ -2,6 +2,11 @@ package handler
 
 import (
     "net/http"
+    "encoding/json"
+
+    "github.com/gorilla/mux"
+
+    "vchaind/model"
 )
 
 func GetRequestOverview(w http.ResponseWriter, r *http.Request) {
@@ -9,29 +14,121 @@ func GetRequestOverview(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetRequestTypes(w http.ResponseWriter, r *http.Request) {
-    // TBD
+    rts := model.GetRequestTypes()
+    json.NewEncoder(w).Encode(rts)
 }
 
 func GetRequests(w http.ResponseWriter, r *http.Request) {
-    // TBD
+    rs := model.ListRequest(nil, nil, nil)
+    json.NewEncoder(w).Encode(rs)
 }
 
 func GetRequest(w http.ResponseWriter, r *http.Request) {
-    // TBD
+    vars := mux.Vars(r)
+    uuid := vars["uuid"]
+
+    req := model.GetRequest(uuid)
+    if req == nil {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    }
+
+    json.NewEncoder(w).Encode(req)
 }
 
 func GetRequestInvokeChain(w http.ResponseWriter, r *http.Request) {
-    // TBD
+    vars := mux.Vars(r)
+    uuid := vars["uuid"]
+
+    req := model.GetRequest(uuid)
+    if req == nil || req.GroupUuid == "" {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    }
+
+    rg := model.GetRequestGroup(req.GroupUuid)
+    if req == nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+    ic := model.GetInvokeChain(rg.InvokeChainId)
+    if ic == nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+    json.NewEncoder(w).Encode(ic)
 }
 
-func GetRequestParentChain(w http.ResponseWriter, r *http.Request) {
-    // TBD
+func GetRequestRequestGroup(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    uuid := vars["uuid"]
+
+    req := model.GetRequest(uuid)
+    if req == nil || req.GroupUuid == "" {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    }
+
+    rg := model.GetRequestGroup(req.GroupUuid)
+    if req == nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+    json.NewEncoder(w).Encode(rg)
 }
 
-func GetRequestChildren (w http.ResponseWriter, r *http.Request) {
-    // TBD
+func GetRequestRootRequest(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    uuid := vars["uuid"]
+
+    req := model.GetRequest(uuid)
+    if req == nil || req.GroupUuid == "" {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    }
+
+    root := model.GetRequest(req.GroupUuid)
+    if root == nil {
+        w.WriteHeader(http.StatusInternalServerError)
+        return
+    }
+
+    json.NewEncoder(w).Encode(root)
+} 
+
+func GetRequestParent(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    uuid := vars["uuid"]
+
+    req := model.GetRequest(uuid)
+    if req == nil {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    }    
+
+    parent := model.GetRequest(req.ParentUuid)
+    json.NewEncoder(w).Encode(parent)
 }
 
-func GetRequestChildrenTree (w http.ResponseWriter, r *http.Request) {
-    // TBD
+func GetRequestChildren(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    uuid := vars["uuid"]
+    
+    conditions := make([]*model.Condition, 0)
+    conditions = append(conditions, model.NewCondition("parent_uuid", "=", uuid))
+    rs := model.ListRequest(conditions, nil, nil)
+    json.NewEncoder(w).Encode(rs)
+}
+
+func GetRequestDescendant(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    uuid := vars["uuid"]
+
+    conditions := make([]*model.Condition, 0)
+    conditions = append(conditions, model.NewCondition("group_uuid", "=", uuid))
+    rs := model.ListRequest(conditions, nil, nil)
+    json.NewEncoder(w).Encode(rs)
 }

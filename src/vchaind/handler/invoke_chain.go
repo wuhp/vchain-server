@@ -68,21 +68,13 @@ func GetInvokeChainHeaderRequests(w http.ResponseWriter, r *http.Request) {
     conditions := make([]*model.Condition, 0)
     conditions = append(conditions, model.NewCondition("header", "=", model.RequestType2string(&st)))
     conditions = append(conditions, model.NewCondition("id", "=", id))
-    
+
     ivkchains := model.ListInvokeChain(conditions, nil, nil)
     if len(ivkchains) == 0 {
         w.WriteHeader(http.StatusNotFound)
         return
     }
 
-    uuids := make([]string, 0)
-    conditions = make([]*model.Condition, 0)
-    conditions = append(conditions, model.NewCondition("invoke_chain_id", "=", id))
-
-    rgs := model.ListRequestGroup(conditions, nil, nil)
-    for _, rg := range rgs {
-        uuids = append(uuids, rg.Uuid)
-    }
-
-    json.NewEncoder(w).Encode(uuids)
+    rs := model.FindRequestsByInvokeChain(ivkchains[0].Id)
+    json.NewEncoder(w).Encode(rs)
 }

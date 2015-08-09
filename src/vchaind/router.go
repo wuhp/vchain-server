@@ -34,9 +34,11 @@ var routes = []Route{
     Route{"GET",  "/api/v1/requests",                      handler.GetRequests           },
     Route{"GET",  "/api/v1/requests/{uuid}",               handler.GetRequest            },
     Route{"GET",  "/api/v1/requests/{uuid}/invoke-chain",  handler.GetRequestInvokeChain },
-    Route{"GET",  "/api/v1/requests/{uuid}/parent-chain",  handler.GetRequestParentChain },
+    Route{"GET",  "/api/v1/requests/{uuid}/request-group", handler.GetRequestRequestGroup},
+    Route{"GET",  "/api/v1/requests/{uuid}/root-request",  handler.GetRequestRootRequest },
+    Route{"GET",  "/api/v1/requests/{uuid}/parent",        handler.GetRequestParent      },
     Route{"GET",  "/api/v1/requests/{uuid}/children",      handler.GetRequestChildren    },
-    Route{"GET",  "/api/v1/requests/{uuid}/children-tree", handler.GetRequestChildrenTree},
+    Route{"GET",  "/api/v1/requests/{uuid}/descendant",    handler.GetRequestDescendant  },
 }
 
 type InnerResponseWriter struct {
