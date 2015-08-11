@@ -16,18 +16,33 @@ go install vchaind
 
 ### Fetch data
 curl http://localhost:8010/api/v1/services
+
 curl http://localhost:8010/api/v1/services-chain
+
 curl http://localhost:8010/api/v1/services/S1/request-categories
+
 curl http://localhost:8010/api/v1/invoke-chains
+
 curl http://localhost:8010/api/v1/invoke-chains/S1/C2
+
 curl http://localhost:8010/api/v1/invoke-chains/S1/C2/2
+
 curl http://localhost:8010/api/v1/invoke-chains/S1/C2/2/root-requests
+
 curl http://localhost:8010/api/v1/request-overview
+
 curl http://localhost:8010/api/v1/request-types
+
 curl http://localhost:8010/api/v1/requests
+
 curl http://localhost:8010/api/v1/requests/S1-C1-001
+
 curl http://localhost:8010/api/v1/requests/S1-C1-001/invoke-chain
+
 curl http://localhost:8010/api/v1/requests/S1-C1-001/request-group
+
 curl http://localhost:8010/api/v1/requests/S1-C1-001/children
+
 curl http://localhost:8010/api/v1/requests/S2-C1-001/parent
+
 curl http://localhost:8010/api/v1/requests/S2-C1-001/root-request
