@@ -54,7 +54,7 @@ func GetInvokeChain(w http.ResponseWriter, r *http.Request) {
     json.NewEncoder(w).Encode(ivkchains[0])
 }
 
-func GetInvokeChainHeaderRequests(w http.ResponseWriter, r *http.Request) {
+func GetInvokeChainRootRequests(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     service := vars["service"]
     category := vars["category"]

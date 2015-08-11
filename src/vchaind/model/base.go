@@ -145,3 +145,33 @@ func RequestTypes2string(rts []*RequestType) string {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+func FindRequestByUuid(rs []*Request, uuid string) int {
+    for i, r := range rs {
+        if r.Uuid == uuid {
+            return i
+        }
+    }
+
+    return -1
+}
+
+func FindRequestParent(rs []*Request, r *Request) int {
+    for i, v := range rs {
+        if v.Uuid == r.ParentUuid {
+            return i
+        }
+    }
+
+    return -1
+}
+
+func FindRequestChildren(rs []*Request, p *Request) []*Request {
+    children := make([]*Request, 0)
+    for _, r := range rs {
+        if r.ParentUuid == p.Uuid {
+            children = append(children, r)
+        }
+    }
+
+    return children
+}

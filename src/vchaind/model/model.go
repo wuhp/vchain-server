@@ -1,6 +1,7 @@
 package model
 
 import (
+    "fmt"
     "encoding/json"
 )
 
@@ -11,9 +12,17 @@ type Pair struct {
     To   string `json:"to"`
 }
 
+func (p *Pair) String() string {
+    return fmt.Sprintf("(%s,%s)", p.From, p.To)
+}
+
 type RequestType struct {
     Service  string `json:"service"`
     Category string `json:"category"`
+}
+
+func (rt *RequestType) String() string {
+    return fmt.Sprintf("(%s,%s)", rt.Service, rt.Category)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -38,7 +47,6 @@ type RequestGroup struct {
     RequestUuids  []string `json:"request_uuids"`
     ParentsIndex  []int    `json:"parents_index"`
     InvokeChainId int64    `json:"-"`
-    IsProcessing  bool     `json:"-"`
 }
 
 type InvokeChain struct {
@@ -202,7 +210,7 @@ func ListRequestGroup(cs []*Condition, o *Order, p *Paging) []*RequestGroup {
     limit := generateLimitSql(p)
 
     rows, err := db.Query(`
-        SELECT uuid, request_uuids, parents_index, invoke_chain_id, is_processing
+        SELECT uuid, request_uuids, parents_index, invoke_chain_id
         FROM request_group
     `+where+order+limit, vs...)
 
@@ -217,7 +225,7 @@ func ListRequestGroup(cs []*Condition, o *Order, p *Paging) []*RequestGroup {
         var rus string
         var pis string
         if err := rows.Scan(
-            &r.Uuid, &rus, &pis, &r.InvokeChainId, &r.IsProcessing,
+            &r.Uuid, &rus, &pis, &r.InvokeChainId,
         ); err != nil {
             panic(err)
         }
@@ -246,10 +254,27 @@ func (r *RequestGroup) Exist() bool {
     return nil != GetRequestGroup(r.Uuid)
 }
 
+func (r *RequestGroup) DetailRequests() []*Request {
+    conditions := make([]*Condition, 0)
+    conditions = append(conditions, NewCondition("group_uuid", "=", r.Uuid))
+    group := ListRequest(conditions, nil, nil)
+
+    result := make([]*Request, 0)
+    for _, uuid := range r.RequestUuids {
+        i := FindRequestByUuid(group, uuid)
+        if i < 0 {
+            // TBD
+        }
+        result = append(result, group[i])
+    }
+
+    return result
+}
+
 func (r *RequestGroup) Save() {
     stmt, err := db.Prepare(`
-        INSERT INTO request_group(uuid, request_uuids, parents_index, invoke_chain_id, is_processing)
-        VALUES(?, ?, ?, ?, ?)
+        INSERT INTO request_group(uuid, request_uuids, parents_index, invoke_chain_id)
+        VALUES(?, ?, ?, ?)
     `)
     if err != nil {
         panic(err)
@@ -259,7 +284,7 @@ func (r *RequestGroup) Save() {
     rus := Strings2string(r.RequestUuids)
     pis := Ints2string(r.ParentsIndex)
 
-    if _, err := stmt.Exec(r.Uuid, rus, pis, r.InvokeChainId, r.IsProcessing); err != nil {
+    if _, err := stmt.Exec(r.Uuid, rus, pis, r.InvokeChainId); err != nil {
         panic(err)
     }
 }
@@ -271,8 +296,7 @@ func (r *RequestGroup) Update() {
         SET
             request_uuids = ?,
             parents_index = ?,
-            invoke_chain_id = ?,
-            is_processing = ?
+            invoke_chain_id = ?
         WHERE
             uuid = ?
     `)
@@ -284,7 +308,7 @@ func (r *RequestGroup) Update() {
     rus := Strings2string(r.RequestUuids)
     pis := Ints2string(r.ParentsIndex)
 
-    if _, err := stmt.Exec(rus, pis, r.InvokeChainId, r.IsProcessing, r.Uuid); err != nil {
+    if _, err := stmt.Exec(rus, pis, r.InvokeChainId, r.Uuid); err != nil {
         panic(err)
     }
 }
@@ -343,6 +367,19 @@ func ListInvokeChain(cs []*Condition, o *Order, p *Paging) []*InvokeChain {
 func GetInvokeChain(id int64) *InvokeChain {
     conditions := make([]*Condition, 0)
     conditions = append(conditions, NewCondition("id", "=", id))
+
+    l := ListInvokeChain(conditions, nil, nil)
+    if len(l) == 0 {
+        return nil
+    }
+
+    return l[0]
+}
+
+func GetInvokeChainByValues(types []*RequestType, index []int) *InvokeChain {
+    conditions := make([]*Condition, 0)
+    conditions = append(conditions, NewCondition("request_types", "=", RequestTypes2string(types)))
+    conditions = append(conditions, NewCondition("parents_index", "=", Ints2string(index)))
 
     l := ListInvokeChain(conditions, nil, nil)
     if len(l) == 0 {

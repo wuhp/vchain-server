@@ -10,6 +10,7 @@ import (
     "os"
 
     "vchaind/model"
+    "vchaind/parser"
 )
 
 var conf *Config
@@ -72,6 +73,8 @@ func main() {
 
     parseConfig(*path)
     initialize()
+
+    go parser.MainLoop()
 
     log.Printf("Starting vchaind on 0.0.0.0:%s ...\n", conf.Port)
 

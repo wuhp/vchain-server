@@ -1,0 +1,10 @@
+{
+    "port": "8010",
+    "database": {
+        "host": "localhost",
+        "user": "root",
+        "password": "root",
+        "port": "4306",
+        "db": "vchaind"
+    }
+}

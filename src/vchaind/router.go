@@ -20,14 +20,14 @@ var routes = []Route{
     Route{"GET",  "/api/v1/ping", handler.Ping    },
     Route{"POST", "/api/v1/data", handler.PostData},
 
-    Route{"GET",  "/api/v1/services",                           handler.GetServices               },
-    Route{"GET",  "/api/v1/services-chain",                     handler.GetServiceChain           },
+    Route{"GET",  "/api/v1/services",                           handler.GetServices                },
+    Route{"GET",  "/api/v1/services-chain",                     handler.GetServiceChain            },
     Route{"GET",  "/api/v1/services/{name}/request-categories", handler.GetServiceRequestCategories},
 
-    Route{"GET",  "/api/v1/invoke-chains",                                           handler.GetAllInvokeChains          },
-    Route{"GET",  "/api/v1/invoke-chains/{service}/{category}",                      handler.GetInvokeChains             },
-    Route{"GET",  "/api/v1/invoke-chains/{service}/{category}/{id}",                 handler.GetInvokeChain              },
-    Route{"GET",  "/api/v1/invoke-chains/{service}/{category}/{id}/header-requests", handler.GetInvokeChainHeaderRequests},
+    Route{"GET",  "/api/v1/invoke-chains",                                         handler.GetAllInvokeChains        },
+    Route{"GET",  "/api/v1/invoke-chains/{service}/{category}",                    handler.GetInvokeChains           },
+    Route{"GET",  "/api/v1/invoke-chains/{service}/{category}/{id}",               handler.GetInvokeChain            },
+    Route{"GET",  "/api/v1/invoke-chains/{service}/{category}/{id}/root-requests", handler.GetInvokeChainRootRequests},
 
     Route{"GET",  "/api/v1/request-overview",              handler.GetRequestOverview    },
     Route{"GET",  "/api/v1/request-types",                 handler.GetRequestTypes       },
@@ -38,7 +38,6 @@ var routes = []Route{
     Route{"GET",  "/api/v1/requests/{uuid}/root-request",  handler.GetRequestRootRequest },
     Route{"GET",  "/api/v1/requests/{uuid}/parent",        handler.GetRequestParent      },
     Route{"GET",  "/api/v1/requests/{uuid}/children",      handler.GetRequestChildren    },
-    Route{"GET",  "/api/v1/requests/{uuid}/descendant",    handler.GetRequestDescendant  },
 }
 
 type InnerResponseWriter struct {

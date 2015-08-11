@@ -17,8 +17,7 @@ create table request_group (
   uuid            varchar(64) not null,
   request_uuids   mediumblob,
   parents_index   mediumblob,
-  invoke_chain_id bigint,
-  is_processing   tinyint
+  invoke_chain_id bigint
 );
 
 create table invoke_chain (

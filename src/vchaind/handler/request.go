@@ -77,7 +77,15 @@ func GetRequestRequestGroup(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    json.NewEncoder(w).Encode(rg)
+    result := struct {
+        Requests     []*model.Request `json:"requests"`
+        ParentsIndex []int            `json:"parents_index"`
+    }{}
+
+    result.ParentsIndex = rg.ParentsIndex
+    result.Requests = rg.DetailRequests()
+
+    json.NewEncoder(w).Encode(result)
 }
 
 func GetRequestRootRequest(w http.ResponseWriter, r *http.Request) {
@@ -119,16 +127,6 @@ func GetRequestChildren(w http.ResponseWriter, r *http.Request) {
     
     conditions := make([]*model.Condition, 0)
     conditions = append(conditions, model.NewCondition("parent_uuid", "=", uuid))
-    rs := model.ListRequest(conditions, nil, nil)
-    json.NewEncoder(w).Encode(rs)
-}
-
-func GetRequestDescendant(w http.ResponseWriter, r *http.Request) {
-    vars := mux.Vars(r)
-    uuid := vars["uuid"]
-
-    conditions := make([]*model.Condition, 0)
-    conditions = append(conditions, model.NewCondition("group_uuid", "=", uuid))
     rs := model.ListRequest(conditions, nil, nil)
     json.NewEncoder(w).Encode(rs)
 }
