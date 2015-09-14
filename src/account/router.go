@@ -17,12 +17,12 @@ type Route struct {
 }
 
 var routes = []Route{
+    Route{"GET",  "/api/v1/ping",                   Ping             },
 /*
-    Route{"GET",  "/api/v1/ping",                   handler.Ping             },
-    Route{"POST", "/api/v1/data",                   handler.PostData         },
-    Route{"GET",  "/api/v1/requests",               handler.GetRequests      },
-    Route{"GET",  "/api/v1/requests/{uuid}",        handler.GetRequest       },
-    Route{"GET",  "/api/v1/requests/{uuid}/parent", handler.GetRequestParent },
+    Route{"POST", "/api/v1/data",                   PostData         },
+    Route{"GET",  "/api/v1/requests",               GetRequests      },
+    Route{"GET",  "/api/v1/requests/{uuid}",        GetRequest       },
+    Route{"GET",  "/api/v1/requests/{uuid}/parent", GetRequestParent },
 */
 }
 
