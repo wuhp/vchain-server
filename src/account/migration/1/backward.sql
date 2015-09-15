@@ -1,0 +1,2 @@
+DROP TABLE repo;
+DROP TABLE user;
