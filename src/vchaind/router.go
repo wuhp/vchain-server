@@ -18,6 +18,10 @@ type Route struct {
 
 var routes = []Route{
     Route{"GET",  "/api/v1/ping",                   Ping             },
+    Route{"POST", "/api/v1/register",               Register         },
+    Route{"POST", "/api/v1/login",                  Login            },
+    Route{"GET",  "/api/v1/users/",                   Ping             },
+
 /*
     Route{"POST", "/api/v1/data",                   PostData         },
     Route{"GET",  "/api/v1/requests",               GetRequests      },
