@@ -8,6 +8,8 @@ import (
     "io/ioutil"
     "net/http"
     "encoding/json"
+
+    "vchaind/model"
 )
 
 var conf *Config
@@ -53,7 +55,7 @@ func initialize() {
         log.SetOutput(f)
     }
 
-    if err := ConnectDatabase(
+    if err := model.ConnectDatabase(
         conf.Database.Host,
         conf.Database.Port,
         conf.Database.User,

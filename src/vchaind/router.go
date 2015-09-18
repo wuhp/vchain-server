@@ -8,6 +8,8 @@ import (
     "net/http"
 
     "github.com/gorilla/mux"
+
+    "vchaind/handler"
 )
 
 type Route struct {
@@ -17,10 +19,9 @@ type Route struct {
 }
 
 var routes = []Route{
-    Route{"GET",  "/api/v1/ping",                   Ping             },
-    Route{"POST", "/api/v1/register",               Register         },
-    Route{"POST", "/api/v1/login",                  Login            },
-    Route{"GET",  "/api/v1/users/",                   Ping             },
+    Route{"GET",  "/api/v1/ping",                   handler.Ping             },
+    Route{"POST", "/api/v1/register",               handler.Register         },
+    Route{"POST", "/api/v1/login",                  handler.Login            },
 
 /*
     Route{"POST", "/api/v1/data",                   PostData         },

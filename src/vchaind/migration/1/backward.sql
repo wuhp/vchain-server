@@ -1,2 +1,2 @@
-DROP TABLE repo;
-DROP TABLE user;
+DROP TABLE repos;
+DROP TABLE users;
