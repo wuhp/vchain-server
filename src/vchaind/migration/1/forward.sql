@@ -1,6 +1,6 @@
 CREATE TABLE users (
   id             BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  name           VARCHAR(32), 
+  name           VARCHAR(32),
   email          VARCHAR(64),
   email_verified TINYINT,
   password       VARCHAR(64),
