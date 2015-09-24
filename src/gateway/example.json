@@ -1,0 +1,11 @@
+{
+  "port": "8101",
+  "log": "/vchain/server/log/gateway.log",  // can be omitted, default to stdout
+  "database": {
+    "host": "localhost",
+    "port": "3306",
+    "user": "root",
+    "password": "root",
+    "db": "gateway"
+  }
+}
