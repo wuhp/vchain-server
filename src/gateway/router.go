@@ -29,7 +29,7 @@ var routes = []Route{
 
     Route{"GET",  "/api/v1/mysql",       handler.QueryMapping},
     Route{"GET",  "/api/v1/mysql/{pid}", handler.GetMapping  },
-    Route{"GET",  "/api/v1/provision",   handler.Provision   },
+    Route{"POST", "/api/v1/provision",   handler.Provision   },
     Route{"POST", "/api/v1/unprovision", handler.Unprovision },
 }
 

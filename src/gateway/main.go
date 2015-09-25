@@ -73,9 +73,7 @@ func main() {
     parseConfig(*path)
     initialize()
 
-    // TBD
-    // go routine to loop health status of all mysql db instances
-    // go routine to loop health status of all mysql hosts
+    go mysqlHealthLoop()
 
     log.Printf("Starting gateway on 0.0.0.0:%s ...\n", conf.Port)
 
