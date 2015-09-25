@@ -26,29 +26,47 @@ func checkHealth(host string, port int, user, password, database string) bool {
 }
 
 func mysqlHealthLoop() {
-    for _, s := range model.ListInstance(nil, nil, nil) {
-        good := checkHealth(s.Host, s.Port, s.AdminUser, s.AdminPassword, "mysql")
-        if good == s.Active {
-            continue
+    for {
+        for _, s := range model.ListInstance(nil, nil, nil) {
+            good := checkHealth(s.Host, s.Port, s.AdminUser, s.AdminPassword, "mysql")
+            if good == s.Active {
+                continue
+            }
+    
+            s.Active = good
+            s.Update()
+
+            status := "active"
+            if !good {
+                status = "inactive"
+            }
+
+            log.Printf(
+                "INFO: mysql server `%s:%d` become %s\n",
+                s.Host, s.Port, status,
+            )
         }
+    
+        for _, mi := range model.ListMapping(nil, nil, nil) {
+            good := checkHealth(mi.MysqlHost, mi.MysqlPort, mi.MysqlUser, mi.MysqlPassword, mi.MysqlDb)
+            if good == mi.MysqlActive {
+                continue
+            }
+    
+            mi.MysqlActive = good
+            mi.Update()
 
-        log.Printf(
-            "INFO: mysql server `%s:%s` active status change from `%v` to `%v`\n",
-            s.Host, s.Port, s.Active, good,
-        )
-    }
+            status := "active"
+            if !good {
+                status = "inactive"
+            }
 
-    for _, mi := range model.ListMapping(nil, nil, nil) {
-        good := checkHealth(mi.MysqlHost, mi.MysqlPort, mi.MysqlUser, mi.MysqlPassword, mi.MysqlDb)
-        if good == mi.MysqlActive {
-            continue
+            log.Printf(
+                "INFO: mysql instance `%s:%d@%s` become %s\n",
+                mi.MysqlHost, mi.MysqlPort, mi.MysqlDb, status,
+            )
         }
-
-        log.Printf(
-            "INFO: mysql instance `%s:%s-%s` active status change from `%v` to `%v`\n",
-            mi.MysqlHost, mi.MysqlPort, mi.MysqlDb, mi.MysqlActive, good,
-        )
+    
+        time.Sleep(2 * time.Second)
     }
-
-    time.Sleep(2 * time.Second)
 }

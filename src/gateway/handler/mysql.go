@@ -43,6 +43,8 @@ func generateMysqlConnection(pid int64) *MysqlConnection {
     mc.Password = "root"
     mc.Database = fmt.Sprintf("vchain_%d", pid)
 
+    log.Printf("INFO: Generate metadata of mysql instance %v for project %d\n", mc, pid)
+
     return mc
 }
 
@@ -53,10 +55,10 @@ func provisionMysqlInstance(mc *MysqlConnection) {
     ).Output()
     if err != nil {
         log.Printf("ERROR: output = %s, err = %v\n", out, err)
-        panic(errors.New("ERROR: fail to provision mysql instance"))
+        panic(errors.New(fmt.Sprintf("ERROR: Fail to provision mysql instance %v", mc)))
     }
 
-    log.Printf("INFO: Successfully privision mysql instance %v\n", mc)
+    log.Printf("INFO: Successfully provision mysql instance %v\n", mc)
 }
 
 func migrateMysqlInstance(mc *MysqlConnection) {
@@ -66,7 +68,7 @@ func migrateMysqlInstance(mc *MysqlConnection) {
     ).Output()
     if err != nil {
         log.Printf("ERROR: output = %s, err = %v\n", out, err)
-        panic(errors.New("ERROR: fail to migrate mysql instance"))
+        panic(errors.New(fmt.Sprintf("ERROR: Fail to migrate mysql instance %v", mc)))
     }
 
     log.Printf("INFO: Successfully migrate mysql instance %v\n", mc)
@@ -79,10 +81,10 @@ func unprovisionMysqlInstance(mc *MysqlConnection) {
     ).Output()
     if err != nil {
         log.Printf("ERROR: output = %s, err = %v\n", out, err)
-        panic(errors.New("ERROR: fail to unprovision mysql instance"))
+        panic(errors.New(fmt.Sprintf("ERROR: Fail to unprovision mysql instance %v", mc)))
     }
 
-    log.Printf("INFO: Successfully unprivision mysql instance %v\n", mc)
+    log.Printf("INFO: Successfully unprovision mysql instance %v\n", mc)
 }
 
 func listActiveInstance() []*model.Instance {
@@ -94,8 +96,8 @@ func listActiveInstance() []*model.Instance {
 
 func queryMappingByMysqlHostPort(host string, port int) []*model.Mapping {
     conditions := make([]*model.Condition, 0)
-    conditions = append(conditions, model.NewCondition("host", "=", host))
-    conditions = append(conditions, model.NewCondition("port", "=", port))
+    conditions = append(conditions, model.NewCondition("mysql_host", "=", host))
+    conditions = append(conditions, model.NewCondition("mysql_port", "=", port))
 
     return model.ListMapping(conditions, nil, nil)
 }

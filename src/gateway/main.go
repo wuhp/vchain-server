@@ -9,7 +9,7 @@ import (
     "net/http"
     "encoding/json"
 
-    "vchaind/model"
+    "gateway/model"
 )
 
 var conf *Config

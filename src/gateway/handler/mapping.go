@@ -29,17 +29,17 @@ func Provision(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    connection := generateMysqlConnection(in.ProjectId)
-    provisionMysqlInstance(connection)
-    migrateMysqlInstance(connection)
+    mc := generateMysqlConnection(in.ProjectId)
+    provisionMysqlInstance(mc)
+    migrateMysqlInstance(mc)
 
     mapping := new(model.Mapping)
     mapping.ProjectId = in.ProjectId
-    mapping.MysqlHost = connection.Host
-    mapping.MysqlPort = connection.Port
-    mapping.MysqlUser = connection.User
-    mapping.MysqlPassword = connection.Password
-    mapping.MysqlDb = connection.Database
+    mapping.MysqlHost = mc.Host
+    mapping.MysqlPort = mc.Port
+    mapping.MysqlUser = mc.User
+    mapping.MysqlPassword = mc.Password
+    mapping.MysqlDb = mc.Database
     mapping.MysqlActive = true
     mapping.Save()
 

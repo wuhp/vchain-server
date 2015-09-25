@@ -21,11 +21,11 @@ type Route struct {
 var routes = []Route{
     Route{"GET", "/api/v1/ping", handler.Ping},
 
-    Route{"GET",    "/api/v1/instances",      handler.QueryInstance },
-    Route{"POST",   "/api/v1/instances",      handler.CreateInstance},
-    Route{"GET",    "/api/v1/instances/{id}", handler.GetInstance   },
-    Route{"PUT",    "/api/v1/instances/{id}", handler.UpdateInstance},
-    Route{"DELETE", "/api/v1/instances/{id}", handler.DeleteInstance},
+    Route{"GET",    "/api/v1/servers",      handler.QueryInstance },
+    Route{"POST",   "/api/v1/servers",      handler.CreateInstance},
+    Route{"GET",    "/api/v1/servers/{id}", handler.GetInstance   },
+    Route{"PUT",    "/api/v1/servers/{id}", handler.UpdateInstance},
+    Route{"DELETE", "/api/v1/servers/{id}", handler.DeleteInstance},
 
     Route{"GET",  "/api/v1/mysql",       handler.QueryMapping},
     Route{"GET",  "/api/v1/mysql/{pid}", handler.GetMapping  },

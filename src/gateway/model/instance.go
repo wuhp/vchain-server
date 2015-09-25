@@ -62,6 +62,19 @@ func GetInstance(id int64) *Instance {
     return l[0]
 }
 
+func GetInstanceByHostPort(host string, port int) *Instance {
+    conditions := make([]*Condition, 0)
+    conditions = append(conditions, NewCondition("host", "=", host))
+    conditions = append(conditions, NewCondition("port", "=", port))
+
+    l := ListInstance(conditions, nil, nil)
+    if len(l) == 0 {
+        return nil
+    }
+
+    return l[0]
+}
+
 func (r *Instance) Save() {
     stmt, err := db.Prepare(`
         INSERT INTO instances(

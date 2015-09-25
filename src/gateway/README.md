@@ -1,13 +1,40 @@
 # gateway
 
-## SQL migration
-    mysql -h 192.168.38.132 -P 3306 -uroot -proot -e "CREATE DATABASE \`gateway\` CHARACTER SET utf8 COLLATE utf8_general_ci;"
-    mysql -h 192.168.38.132 -P 3306 -uroot -proot gateway < migration/1/forward.sql
+## Build & Install
+    ./deploy.sh
 
-## Build
-    export GOPATH=$PWD
-    go get gateway
-    go install gateway
+## SQL Migration
+    vim /vchain/migration/gateway.def 
+    . /vchain/migration/gateway.source
+    /vchain/migration/db_create
+    /vchain/migration/migrate latest
 
 ## Start
-    ./bin/gateway -c config/gateway.json
+    vim /vchain/server/config/gateway.json
+    /vchain/server/bin/gateway -c /vchain/server/config/gateway.json
+
+## API
+### Ping
+    curl -si http://localhost:8101/api/v1/ping
+
+### Mysql server
+    curl -si http://localhost:8101/api/v1/servers
+    curl -si -X POST http://localhost:8101/api/v1/servers -d '{
+        "host": "192.168.38.132",
+        "port": 13306,
+        "admin_user": "root",
+        "admin_password": "password"
+    }'
+    curl -si http://localhost:8101/api/v1/servers/1
+    curl -si -X PUT http://localhost:8101/api/v1/servers/1 -d '{
+        "admin_user": "root",
+        "admin_password": "root"
+    }'
+    curl -si -X DELETE http://localhost:8101/api/v1/servers/1
+
+### Mysql instance
+    curl -si http://localhost:8101/api/v1/mysql
+    curl -si -X POST http://localhost:8101/api/v1/provision -d '{"project_id":1}'
+    curl -si http://localhost:8101/api/v1/mysql/1
+    curl -si -X POST http://localhost:8101/api/v1/unprovision -d '{"project_id":1}'
+
