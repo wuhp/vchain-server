@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Only support mysql
+
+[ -z ${DATABASE_HOST} ] && echo "ERROR: env DATABASE_HOST not set" && exit -1
+[ -z ${DATABASE_PORT} ] && echo "ERROR: env DATABASE_PORT not set" && exit -1
+[ -z ${DATABASE_DBNAME} ] && echo "ERROR: env DATABASE_DBNAME not set" && exit -1
+[ -z ${DATABASE_USER} ] && echo "ERROR: env DATABASE_USER not set" && exit -1
+[ -z ${DATABASE_PASSWD} ] && echo "ERROR: env DATABASE_PASSWD not set" && exit -1
+
+which mysql > /dev/null 2>&1
+[ $? -ne 0 ] && echo "ERROR: can not find mysql client" && exit -1
+
+mysql -h${DATABASE_HOST} -P${DATABASE_PORT} -u${DATABASE_USER} -p${DATABASE_PASSWD} \
+      -e "DROP DATABASE \`${DATABASE_DBNAME}\`;"

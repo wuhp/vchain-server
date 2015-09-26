@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export DATABASE_HOST="192.168.38.132"
+export DATABASE_PORT="3306"
+export DATABASE_USER="root"
+export DATABASE_PASSWD="root"
+export DATABASE_DBNAME="test"
+export MIGRATION_SCRIPT_DIR="/vchain/migration/test"
