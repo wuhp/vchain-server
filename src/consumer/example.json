@@ -1,0 +1,5 @@
+{
+  "port": "8102",
+  "log": "/vchain/server/log/consumer.log",
+  "gateway": "localhost:8101"
+}

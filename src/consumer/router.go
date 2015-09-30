@@ -19,7 +19,7 @@ type Route struct {
 }
 
 var routes = []Route{
-    Route{"GET", "/api/v1/{pid}/ping", handler.Ping},
+    Route{"GET", "/api/v1/ping", handler.Ping},
 
     Route{"POST", "/api/v1/{pid}/requests",     handler.PostRequest   },
     Route{"POST", "/api/v1/{pid}/request-logs", handler.PostRequestLog},
@@ -33,8 +33,10 @@ var routes = []Route{
     Route{"GET", "/api/v1/{pid}/invoke-chains/{service}/{category}/{id}",               handler.GetInvokeChain            },
     Route{"GET", "/api/v1/{pid}/invoke-chains/{service}/{category}/{id}/root-requests", handler.GetInvokeChainRootRequests},
 
-    Route{"GET", "/api/v1/{pid}/request-logs",        handler.GetAllRequestLogs },
-    Route{"GET", "/api/v1/{pid}/request-logs/{uuid}", handler.GetSomeRequestLogs},
+    Route{"GET", "/api/v1/{pid}/request-logs",                      handler.GetLogs           },
+    Route{"GET", "/api/v1/{pid}/request-logs/{service}",            handler.GetServiceLogs    },
+    Route{"GET", "/api/v1/{pid}/request-logs/{service}/{category}", handler.GetRequestTypeLogs},
+    Route{"GET", "/api/v1/{pid}/requests/{uuid}/logs",              handler.GetRequestLogs    },
 
     Route{"GET", "/api/v1/{pid}/requests",                      handler.GetRequests           },
     Route{"GET", "/api/v1/{pid}/requests/{uuid}",               handler.GetRequest            },

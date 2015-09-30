@@ -9,7 +9,7 @@ go install gateway
 
 # Install
 mkdir -p /vchain/server/bin
-mkdir -p /vchain/server/mysql
+mkdir -p /vchain/server/datasource
 
 install ${ROOT_DIR}/bin/gateway /vchain/server/bin/gateway
 install ${ROOT_DIR}/tools/migrate /vchain/server/bin/migrate
@@ -17,8 +17,8 @@ install ${ROOT_DIR}/src/gateway/script/migrate_mysql.sh /vchain/server/bin/migra
 install ${ROOT_DIR}/src/gateway/script/provision_mysql.sh /vchain/server/bin/provision_mysql.sh
 install ${ROOT_DIR}/src/gateway/script/unprovision_mysql.sh /vchain/server/bin/unprovision_mysql.sh
 
-rm -rf /vchain/server/mysql/schema_migration
-cp -r ${ROOT_DIR}/src/gateway/mysql/schema_migration /vchain/server/mysql/schema_migration
+rm -rf /vchain/server/datasource/schema_migration
+cp -r ${ROOT_DIR}/src/datasource/schema_migration /vchain/server/datasource/schema_migration
 
 # SQL Migration
 mkdir -p /vchain/migration

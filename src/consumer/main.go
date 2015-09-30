@@ -9,7 +9,7 @@ import (
     "net/http"
     "encoding/json"
 
-    "consumer/discover"
+    "discover"
 )
 
 var conf *Config
@@ -47,7 +47,7 @@ func initialize() {
         log.SetOutput(f)
     }
 
-    discover.Init(conf.Gateway)
+    discover.InitGateway(conf.Gateway)
 }
 
 func main() {
