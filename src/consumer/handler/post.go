@@ -1,6 +1,7 @@
 package handler
 
 import (
+    "time"
     "net/http"
     "encoding/json"
 
@@ -21,6 +22,7 @@ func PostRequest(w http.ResponseWriter, r *http.Request) {
     }
 
     for _, req := range reqs {
+        req.CreateTs = time.Now().UTC().Unix()
         req.Save(db)
     }
 }

@@ -57,10 +57,6 @@ func GetRequestGroup(db *sql.DB, uuid string) *RequestGroup {
     return l[0]
 }
 
-func (r *RequestGroup) Exist(db *sql.DB) bool {
-    return nil != GetRequestGroup(db, r.Uuid)
-}
-
 func (r *RequestGroup) Save(db *sql.DB) {
     stmt, err := db.Prepare(`
         INSERT INTO request_group(uuid, request_uuids, parents_index, invoke_chain_id)

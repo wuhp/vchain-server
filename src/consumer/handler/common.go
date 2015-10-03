@@ -15,6 +15,7 @@ import (
 
     "discover"
     "datasource"
+    gm "gateway/model"
 )
 
 func fetchDbConnection(gateway string, pid int64) *sql.DB {
@@ -46,18 +47,8 @@ func fetchDbConnection(gateway string, pid int64) *sql.DB {
 
     log.Printf("INFO: %s %s %s\n", method, url, res.Status)
 
-    mapping := struct {
-        ProjectId     int64  `json:"project_id"`
-        MysqlHost     string `json:"mysql_host"`
-        MysqlPort     int    `json:"mysql_port"`
-        MysqlUser     string `json:"mysql_user"`
-        MysqlPassword string `json:"mysql_password"`
-        MysqlDb       string `json:"mysql_db"`
-        MysqlActive   bool   `json:"mysql_active"`
-        CreateTs      int64  `json:"create_ts"`
-    } {}
-
-    if err := json.Unmarshal(out, &mapping); err != nil {
+    mapping := new(gm.Mapping)
+    if err := json.Unmarshal(out, mapping); err != nil {
         panic(fmt.Sprintf("ERROR: Fail to parse response body, %s %s, with err %v\n", method, url, err))
     }
 

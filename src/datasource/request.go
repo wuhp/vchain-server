@@ -62,10 +62,6 @@ func GetRequest(db *sql.DB, uuid string) *Request {
     return l[0]
 }
 
-func (r *Request) Exist(db *sql.DB) bool {
-    return nil != GetRequest(db, r.Uuid)
-}
-
 func (r *Request) Save(db *sql.DB) {
     stmt, err := db.Prepare(`
         INSERT INTO request(
@@ -85,6 +81,28 @@ func (r *Request) Save(db *sql.DB) {
     if _, err := stmt.Exec(
         r.Uuid, r.ParentUuid, r.Service, r.Category, r.Sync,
         r.BeginTs, r.EndTs, r.GroupUuid, r.CreateTs,
+    ); err != nil {
+        panic(err)
+    }
+}
+
+func (r *Request) Update(db *sql.DB) {
+    stmt, err := db.Prepare(`
+        UPDATE
+            request
+        SET
+            group_uuid = ?
+        WHERE
+            uuid = ?
+    `)
+    if err != nil {
+        panic(err)
+    }
+    defer stmt.Close()
+
+    if _, err := stmt.Exec(
+        r.GroupUuid,
+        r.Uuid,
     ); err != nil {
         panic(err)
     }

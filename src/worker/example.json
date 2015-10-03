@@ -1,0 +1,4 @@
+{
+  "log": "/vchain/server/log/worker.log",
+  "gateway": "localhost:8101"
+}
