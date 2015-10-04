@@ -14,6 +14,7 @@ func PostRequest(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     reqs := make([]*datasource.Request, 0)
     if err := json.NewDecoder(r.Body).Decode(&reqs); err != nil {
@@ -32,8 +33,9 @@ func PostRequestLog(w http.ResponseWriter, r *http.Request) {
     if db == nil {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
-    }    
-    
+    }
+    defer db.Close()
+
     rlogs := make([]*datasource.RequestLog, 0)
     if err := json.NewDecoder(r.Body).Decode(&rlogs); err != nil {
         http.Error(w, err.Error(), http.StatusBadRequest)

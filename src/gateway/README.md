@@ -4,7 +4,7 @@
     ./deploy.sh
 
 ## SQL Migration
-    vim /vchain/migration/gateway.def 
+    vim /vchain/migration/gateway.def
     . /vchain/migration/gateway.source
     /vchain/migration/db_create
     /vchain/migration/migrate latest

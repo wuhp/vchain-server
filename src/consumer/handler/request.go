@@ -13,6 +13,7 @@ func GetRequests(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     tsRange := getTimeRange(r)
     if tsRange == nil {
@@ -34,6 +35,7 @@ func GetRequest(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     req := datasource.GetRequest(db, getUuid(r))
     if req == nil {
@@ -50,6 +52,7 @@ func GetRequestInvokeChain(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     req := datasource.GetRequest(db, getUuid(r))
     switch {
@@ -72,6 +75,7 @@ func GetRequestRequestGroup(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     req := datasource.GetRequest(db, getUuid(r))
     switch {
@@ -102,6 +106,7 @@ func GetRequestRootRequest(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     req := datasource.GetRequest(db, getUuid(r))
     switch {
@@ -123,6 +128,7 @@ func GetRequestParent(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     req := datasource.GetRequest(db, getUuid(r))
     if req == nil {
@@ -131,6 +137,11 @@ func GetRequestParent(w http.ResponseWriter, r *http.Request) {
     }
 
     parent := datasource.GetRequest(db, req.ParentUuid)
+    if parent == nil {
+        http.Error(w, "Request has no parent", http.StatusNotFound)
+        return
+    }
+
     json.NewEncoder(w).Encode(parent)
 }
 
@@ -140,6 +151,7 @@ func GetRequestChildren(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     req := datasource.GetRequest(db, getUuid(r))
     if req == nil {

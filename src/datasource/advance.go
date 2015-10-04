@@ -63,32 +63,30 @@ func GetRequestTypes(db *sql.DB, tr *TimeRange) []*RequestType {
         FROM request
         WHERE begin_ts > ? AND begin_ts < ?
         GROUP BY service, category
-    `   
-        
+    `
+
     rows, err := db.Query(sql, tr.Begin, tr.End)
     if err != nil {
         panic(err)
     }
     defer rows.Close()
-        
+
     l := make([]*RequestType, 0)
     for rows.Next() {
         rt := new(RequestType)
         if err := rows.Scan(&rt.Service, &rt.Category); err != nil {
             panic(err)
-        } 
-        
+        }
+
         l = append(l, rt)
-    }   
+    }
 
     return l
 }
 
 func QueryInvokeChain(db *sql.DB, tr *TimeRange, rt *RequestType) []*InvokeChain {
-    var sql string
-    var vs []interface{}
-
-    sql = `
+    vs := make([]interface{}, 0)
+    sql := `
         SELECT ic.id, ic.header, ic.request_types, ic.parents_index
         FROM request AS r, request_group AS rg, invoke_chain AS ic
         WHERE ic.id = rg.invoke_chain_id AND rg.uuid = r.uuid AND r.begin_ts > ? AND r.begin_ts < ?
@@ -101,7 +99,7 @@ func QueryInvokeChain(db *sql.DB, tr *TimeRange, rt *RequestType) []*InvokeChain
         vs = append(vs, RequestType2string(rt))
     }
 
-    rows, err := db.Query(sql, rt)
+    rows, err := db.Query(sql, vs...)
 
     if err != nil {
         panic(err)

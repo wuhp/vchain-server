@@ -62,7 +62,7 @@ func Unprovision(w http.ResponseWriter, r *http.Request) {
     if mapping == nil {
         w.WriteHeader(http.StatusNotFound)
         return
-    }   
+    }
 
     mc := new(MysqlConnection)
     mc.Host = mapping.MysqlHost

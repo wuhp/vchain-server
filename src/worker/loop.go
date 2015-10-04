@@ -5,7 +5,6 @@ import (
     "fmt"
     "time"
     "io/ioutil"
-    "database/sql"
     "net/http"
     "encoding/json"
 
@@ -19,7 +18,10 @@ func mainLoop() {
     for {
         projects := getActiveProjects()
         for _, p := range projects {
+            log.Printf("INFO: Start to process project %d\n", p.id)
+            p.connect()
             p.process()
+            p.disconnect()
         }
         time.Sleep(1 * time.Second)
     }
@@ -67,7 +69,6 @@ func getActiveProjects() []*Project {
     }
 
     mappings := getMappings(gateway)
-
     projects := make([]*Project, 0)
     for _, mapping := range mappings {
         if !mapping.MysqlActive {
@@ -75,23 +76,13 @@ func getActiveProjects() []*Project {
             continue
         }
 
-        uri := fmt.Sprintf(
-            "%s:%s@tcp(%s:%s)/%s",
-            mapping.MysqlUser,
-            mapping.MysqlPassword,
-            mapping.MysqlHost,
-            mapping.MysqlPort,
-            mapping.MysqlDb,
-        )
-        db, err := sql.Open("mysql", uri)
-        if err != nil {
-            log.Printf("ERROR: Fail to connect to mysql %s for project %d, with err %v\n", uri, mapping.ProjectId, err)
-            log.Printf("INFO: Ignore to process data for project %d\n", mapping.ProjectId)
-            continue
-        }
-
         p := new(Project)
-        p.db = db
+        p.id = mapping.ProjectId
+        p.host = mapping.MysqlHost
+        p.port = mapping.MysqlPort
+        p.user = mapping.MysqlUser
+        p.password = mapping.MysqlPassword
+        p.database = mapping.MysqlDb
         projects = append(projects, p)
     }
 

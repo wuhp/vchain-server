@@ -50,5 +50,6 @@ func main() {
     parseConfig(*path)
     initialize()
 
+    log.Printf("INFO: Successfully start worker, entering process loop ...\n")
     mainLoop()
 }

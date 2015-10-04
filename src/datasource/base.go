@@ -147,7 +147,7 @@ func Ints2string(is []int) string {
 
 func String2requestType(s string) *RequestType {
     ss := strings.Split(s, ",")
-    
+
     return &RequestType{
         Service: ss[0],
         Category: ss[1],

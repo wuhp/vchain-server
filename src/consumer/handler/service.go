@@ -13,6 +13,7 @@ func GetServices(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     tsRange := getTimeRange(r)
     if tsRange == nil {
@@ -30,6 +31,7 @@ func GetServiceChain(w http.ResponseWriter, r *http.Request) {
         http.Error(w, "Invalid project id", http.StatusNotFound)
         return
     }
+    defer db.Close()
 
     tsRange := getTimeRange(r)
     if tsRange == nil {

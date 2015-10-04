@@ -18,6 +18,8 @@ func checkHealth(host string, port int, user, password, database string) bool {
         return false
     }
 
+    defer db.Close()
+
     if db.Ping() != nil {
         return false
     }
@@ -32,7 +34,7 @@ func mysqlHealthLoop() {
             if good == s.Active {
                 continue
             }
-    
+
             s.Active = good
             s.Update()
 
@@ -46,13 +48,13 @@ func mysqlHealthLoop() {
                 s.Host, s.Port, status,
             )
         }
-    
+
         for _, mi := range model.ListMapping(nil, nil, nil) {
             good := checkHealth(mi.MysqlHost, mi.MysqlPort, mi.MysqlUser, mi.MysqlPassword, mi.MysqlDb)
             if good == mi.MysqlActive {
                 continue
             }
-    
+
             mi.MysqlActive = good
             mi.Update()
 
@@ -66,7 +68,7 @@ func mysqlHealthLoop() {
                 mi.MysqlHost, mi.MysqlPort, mi.MysqlDb, status,
             )
         }
-    
+
         time.Sleep(2 * time.Second)
     }
 }

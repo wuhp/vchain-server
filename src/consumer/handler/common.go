@@ -54,7 +54,7 @@ func fetchDbConnection(gateway string, pid int64) *sql.DB {
 
     // init db object
     uri := fmt.Sprintf(
-        "%s:%s@tcp(%s:%s)/%s",
+        "%s:%s@tcp(%s:%d)/%s",
         mapping.MysqlUser,
         mapping.MysqlPassword,
         mapping.MysqlHost,
