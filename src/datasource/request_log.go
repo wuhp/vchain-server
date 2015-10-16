@@ -42,6 +42,19 @@ func ListRequestLog(db *sql.DB, cs []*Condition, o *Order, p *Paging) []*Request
     return l
 }
 
+func GetRequestLog(db *sql.DB, uuid string, ts int64) *RequestLog {
+    conditions := make([]*Condition, 0)
+    conditions = append(conditions, NewCondition("uuid", "=", uuid))
+    conditions = append(conditions, NewCondition("timestamp", "=", ts))
+
+    rlogs := ListRequestLog(db, conditions, nil, nil)
+    if len(rlogs) == 0 {
+        return nil
+    }
+
+    return rlogs[0]
+}
+
 func DeleteRequestLog(db *sql.DB, cs []*Condition) {
     where, vs := generateWhereSql(cs)
 

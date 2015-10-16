@@ -2,6 +2,7 @@ package handler
 
 import (
     "time"
+    "log"
     "net/http"
     "encoding/json"
 
@@ -23,6 +24,10 @@ func PostRequest(w http.ResponseWriter, r *http.Request) {
     }
 
     for _, req := range reqs {
+        if datasource.GetRequest(db, req.Uuid) != nil {
+            log.Printf("INFO: request %s exists, skip to save ...\n", req.Uuid)
+            continue
+        }
         req.CreateTs = time.Now().UTC().Unix()
         req.Save(db)
     }
@@ -43,6 +48,10 @@ func PostRequestLog(w http.ResponseWriter, r *http.Request) {
     }
 
     for _, rlog := range rlogs {
+        if datasource.GetRequestLog(db, rlog.Uuid, rlog.Timestamp) != nil {
+            log.Printf("INFO: request log `%s %d` exists, skip to save ...\n", rlog.Uuid, rlog.Timestamp)
+            continue
+        }
         rlog.Save(db)
     }
 }
