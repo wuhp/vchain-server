@@ -36,9 +36,9 @@ func post(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // TBD
-    // How to handle error here or even ignore it
-    consume(pid, data)
+    if !consume(pid, data) {
+        w.WriteHeader(http.StatusBadRequest)
+    }
 }
 
 func verify(key string) (int64, bool) {
@@ -98,25 +98,33 @@ func verify(key string) (int64, bool) {
     return project.Pid, project.Ok
 }
 
-func consume(pid int64, data *Data) {
+func consume(pid int64, data *Data) bool {
     host, err := discover.DiscoverConsumer()
     if err != nil {
         log.Printf("ERROR: Fail to discover consumer, with err %v\n", err)
         panic(err)
     }
 
-    consumeRequest(host, pid, data.Reqs)
-    consumeRequestLog(host, pid, data.Rlogs)
+    if !consumeRequest(host, pid, data.Reqs) {
+        return false
+    }
+
+    if !consumeRequestLog(host, pid, data.Rlogs) {
+        return false
+    }
+
+    return true
 }
 
-func consumeRequest(host string, pid int64, reqs []*datasource.Request) {
+func consumeRequest(host string, pid int64, reqs []*datasource.Request) bool {
     client := &http.Client{}
     inbody, _ := json.Marshal(reqs)
-    req, err := http.NewRequest(
-        "POST",
-        fmt.Sprintf("http://%s/api/v1/%d/requests", host, pid),
-        bytes.NewBuffer(inbody),
-    )
+
+    method := "POST"
+    url := fmt.Sprintf("http://%s/api/v1/%d/requests", host, pid)
+
+    log.Printf("INFO: Send http request `%s %s`", method, url)
+    req, err := http.NewRequest(method, url, bytes.NewBuffer(inbody))
     if err != nil {
         log.Printf("ERROR: Fail to create http request, with err %v\n", err)
         panic(err)
@@ -129,21 +137,27 @@ func consumeRequest(host string, pid int64, reqs []*datasource.Request) {
         panic(err)
     }
 
-    log.Printf("INFO: Http response %s\n", res.Status)
+    log.Printf("INFO: Receive response `%s %s %s`\n", method, url, res.Status)
 
-    if res.StatusCode != http.StatusOK {
-        panic("ERROR: Response status not 200")
+    switch res.StatusCode {
+    case http.StatusInternalServerError:
+        panic("ERROR: consumer status 500")
+    case http.StatusOK:
+        return true
     }
+
+    return false
 }
 
-func consumeRequestLog(host string, pid int64, rlogs []*datasource.RequestLog) {
+func consumeRequestLog(host string, pid int64, rlogs []*datasource.RequestLog) bool {
     client := &http.Client{}
     inbody, _ := json.Marshal(rlogs)
-    req, err := http.NewRequest(
-        "POST",
-        fmt.Sprintf("http://%s/api/v1/%d/request-logs", host, pid),
-        bytes.NewBuffer(inbody),
-    )
+
+    method := "POST"
+    url := fmt.Sprintf("http://%s/api/v1/%d/request-logs", host, pid)
+
+    log.Printf("INFO: Send http request `%s %s`", method, url)
+    req, err := http.NewRequest(method, url, bytes.NewBuffer(inbody))
     if err != nil {
         log.Printf("ERROR: Fail to create http request, with err %v\n", err)
         panic(err)
@@ -156,9 +170,14 @@ func consumeRequestLog(host string, pid int64, rlogs []*datasource.RequestLog) {
         panic(err)
     }
 
-    log.Printf("INFO: Http response %s\n", res.Status)
+    log.Printf("INFO: Receive response `%s %s %s`\n", method, url, res.Status)
 
-    if res.StatusCode != http.StatusOK {
-        panic("ERROR: Response status not 200")
+    switch res.StatusCode {
+    case http.StatusInternalServerError:
+        panic("ERROR: consumer status 500")
+    case http.StatusOK:
+        return true
     }
+
+    return false
 }
