@@ -1,8 +1,6 @@
 package model
 
-import (
-    "time"
-)
+import "time"
 
 type Repo struct {
     Id       int64  `json:"id"`
@@ -12,141 +10,70 @@ type Repo struct {
     CreateTs int64  `json:"create_ts"`
 }
 
-////////////////////////////////////////////////////////////////////////////////
 
-func ListRepo(cs []*Condition, o *Order, p *Paging) []*Repo {
-    where, vs := GenerateWhereSql(cs)
-    order := GenerateOrderSql(o)
-    limit := GenerateLimitSql(p)
-
-    rows, err := db.Query(`
-        SELECT
-            id, user_id, name, hash, create_ts
-        FROM
-            repos
-        ` + where + order + limit, vs...,
-    )
-    if err != nil {
-        panic(err)
-    }
-    defer rows.Close()
-
-    l := make([]*Repo, 0)
-    for rows.Next() {
-        r := new(Repo)
-        if err := rows.Scan(
-            &r.Id, &r.UserId, &r.Name, &r.Hash, &r.CreateTs,
-        ); err != nil {
-            panic(err)
-        }
-
-        l = append(l, r)
-    }
-
-    return l
+var TableDefinition_Repo []string = []string {
+  "id", "user_id", "name", "hash", "create_ts",
 }
 
-func GetRepo(id int64) *Repo {
-    conditions := make([]*Condition, 0)
-    conditions = append(conditions, NewCondition("id", "=", id))
-
-    l := ListRepo(conditions, nil, nil)
-    if len(l) == 0 {
-        return nil
-    }
-
-    return l[0]
+func Map2Repo (obj map[string]interface{}) *Repo {
+  res := new(Repo)
+  res.Id = obj["id"].(int64)
+  res.UserId = obj["user_id"].(int64)
+  res.Name = obj["name"].(string)
+  res.Hash = obj["hash"].(string)
+  res.CreateTs = obj["create_ts"].(int64)
+  return res
 }
 
-func (r *Repo) Save() {
-    stmt, err := db.Prepare(`
-        INSERT INTO repos(
-            user_id, name, hash, create_ts
-        )
-        VALUES(?, ?, ?, ?)
-    `)
-    if err != nil {
-        panic(err)
-    }
-    defer stmt.Close()
-
-    r.Hash = generateHash()
-    r.CreateTs = time.Now().UTC().Unix()
-
-    result, err := stmt.Exec(
-        r.UserId, r.Name, r.Hash, r.CreateTs,
-    )
-    if err != nil {
-        panic(err)
-    }
-
-    r.Id, err = result.LastInsertId()
-    if err != nil {
-        panic(err)
-    }
+func Repo2Map (obj *Repo) map[string]interface{} {
+  res := make(map[string]interface{})
+  res["id"] = obj.Id
+  res["user_id"] = obj.UserId
+  res["name"] = obj.Name
+  res["hash"] = obj.Hash
+  res["create_ts"] = obj.CreateTs
+  return res
 }
 
-func (r *Repo) Update() {
-    stmt, err := db.Prepare(`
-        UPDATE
-            repos
-        SET
-            name = ?,
-        WHERE
-            id = ?
-    `)
-    if err != nil {
-        panic(err)
-    }
-    defer stmt.Close()
-
-    if _, err := stmt.Exec(
-        r.Name,
-        r.Id,
-    ); err != nil {
-        panic(err)
-    }
+func RepoMakeValues (repo *Repo) []interface{} {
+  values := make([]interface{}, 4)
+  values[0] = repo.UserId
+  values[1] = repo.Name
+  values[2] = repo.Hash
+  values[3] = repo.CreateTs
+  return values
 }
 
-func (r *Repo) Delete() {
-    stmt, err := db.Prepare(`
-        DELETE FROM
-            repos
-        WHERE
-            id = ?
-    `)
-    if err != nil {
-        panic(err)
-    }
-    defer stmt.Close()
-
-    if _, err := stmt.Exec(r.Id); err != nil {
-        panic(err)
-    }
+func RepoGetOne(id int64) map[string]interface{} {
+  sql := "SELECT " + TableColumns(TableDefinition_Repo) + " FROM repos WHERE id=?"
+  return DBGetOne(db, sql, id, TableDefinition_Repo)
 }
 
-////////////////////////////////////////////////////////////////////////////////
+func RepoGetList(conditions string, args []interface{}) []map[string]interface{} {
+  sql := "SELECT " + TableColumns(TableDefinition_Repo) + " FROM repos " + conditions
+  return DBGetList(db, sql, args, TableDefinition_Repo)
+}
 
-func (r *Repo) ResetHash() {
-    stmt, err := db.Prepare(`
-        UPDATE
-            repos
-        SET
-            hash = ?,
-        WHERE
-            id = ?
-    `)
-    if err != nil {
-        panic(err)
-    }
-    defer stmt.Close()
+func RepoCreate(repo *Repo) *Repo {
+  sql := "INSERT INTO repos (user_id, name, hash, create_ts) VALUES (?, ?, ?, ?)"
+  repo.CreateTs = time.Now().UTC().Unix()
+  id := DBInsert(db, sql, RepoMakeValues(repo))
+  repo.Id = id
+  return repo
+}
 
-    r.Hash = generateHash()
+func RepoUpdate(repo *Repo) *Repo {
+  sql := "UPDATE repos SET user_id=?, name=?, hash=?, create_ts=? WHERE id=?"
+  DBUpdate(db, sql, repo.Id, RepoMakeValues(repo))
+  return repo
+}
 
-    if _, err := stmt.Exec(
-        r.Hash,
-        r.Id,
-    ); err != nil {
-        panic(err)
-    }
+func RepoRemove(id int64) {
+  sql := "DELETE FROM repos WHERE id=?"
+  DBRemove(db, sql, id)
+}
+
+func (repo *Repo) ResetHash() {
+  repo.Hash = generateHash()
+  RepoUpdate(repo)
 }
