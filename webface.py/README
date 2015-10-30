@@ -1,0 +1,20 @@
+webface for vchain
+
+virtualenv env
+source env/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8080
+
+curl -XPOST   http://127.0.0.1:8080/api/v1/user/register/ -d '{"username":"test", "password":"test"}'
+curl -XPOST   http://127.0.0.1:8080/api/v1/user/login/ -d '{"username":"test", "password":"test"}'
+curl -XPOST   http://127.0.0.1:8080/api/v1/repository/ -d '{"name": "hello"}'
+curl -XPOST   http://127.0.0.1:8080/api/v1/repository/ -d '{"name": "world"}'
+curl -XGET    http://127.0.0.1:8080/api/v1/repository/1/
+curl -XPUT    http://127.0.0.1:8080/api/v1/repository/1/ -d '{"key": ""}'
+curl -XPUT    http://127.0.0.1:8080/api/v1/repository/1/ -d '{"name": "hello1"}' (new key will be generated)
+curl -XDELETE http://127.0.0.1:8080/api/v1/repository/1/
+curl -XGET    http://127.0.0.1:8080/api/v1/repository/
+curl -XGET    http://127.0.0.1:8080/api/v1/repository/?name=hello
+curl -XGET    http://127.0.0.1:8080/api/v1/repository/?key=<somekey>
+curl -XPOST   http://127.0.0.1:8080/api/v1/user/logout/
