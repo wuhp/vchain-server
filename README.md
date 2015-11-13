@@ -1,15 +1,23 @@
 # vchain-server
 
-## DB
-    mysql -h 192.168.38.132 -P 3306 -uroot -proot -e "CREATE DATABASE \`vchaind\` CHARACTER SET utf8 COLLATE utf8_general_ci;"
+## components
+    vchaind  - auth & project management & communicated with web browser
+    receiver - communicate with vchain-client, collect end user's vchain data
+    consumer - consume chain data, read by vchaind and wrote by receiver
+    gateway  - providion db instance, which store end user's vchain data
+    worker   - backend work deamon, parse chain data
 
-## SQL migration
-    mysql -h 192.168.38.132 -P 3306 -uroot -proot vchaind < src/vchaind/migration/1/forward.sql
+## vchaind
+    src/vchaind/README.md
 
-## Build
-    export GOPATH=$PWD
-    go get vchaind
-    go install vchaind
+## receiver
+    src/receiver/README.md
 
-## Start
-    ./bin/vchaind -c config/vchaind.json
+## consumer
+    src/consumer/README.md
+
+## gateway
+    src/gateway/README.md
+
+## worker
+    src/worker/README.md
